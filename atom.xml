@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://SBDZZ.github.io</id>
     <title>Gridea</title>
-    <updated>2020-10-18T11:55:46.912Z</updated>
+    <updated>2020-10-18T15:35:08.555Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://SBDZZ.github.io"/>
     <link rel="self" href="https://SBDZZ.github.io/atom.xml"/>
@@ -10,6 +10,69 @@
     <logo>https://SBDZZ.github.io/images/avatar.png</logo>
     <icon>https://SBDZZ.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[关于Python wav文件参数以及wave类使用]]></title>
+        <id>https://SBDZZ.github.io/post/guan-yu-python-wav-wen-jian-can-shu-yi-ji-wave-lei-shi-yong/</id>
+        <link href="https://SBDZZ.github.io/post/guan-yu-python-wav-wen-jian-can-shu-yi-ji-wave-lei-shi-yong/">
+        </link>
+        <updated>2020-10-18T11:56:31.000Z</updated>
+        <content type="html"><![CDATA[<p>上周242Lab查找了很多有关wav音频文件以及wave类使用的信息，在这里做个整理</p>
+<h1 id="wav文件">wav文件</h1>
+<h2 id="文件读取">文件读取：</h2>
+<pre><code>wave.open(file, mode)
+</code></pre>
+<p>mode: 'rb' 读取文件， 'wb' 写入文件</p>
+<h2 id="常用参数">常用参数</h2>
+<p>声道数（nchannels）:支持能不同发声的音响的个数<br>
+量化位数（sampwidth）:又称为采样位数，是模拟量转换成数字量之后的数据位数。量化位是对模拟音频信号的幅度轴进行数字化，它决定了模拟信号数字化以后的动态范围。在声卡中常见的为8位，16位，32位。8位声卡的声音从最低音到最高音只有256个级别，16位声卡有65536个高低音级别。用2进制来表示不同的精度单位。量化位数越大，采样的越精确，但同时花费的空间也越大。<br>
+采样频率（framerate）:单位时间内采样点的个数。如采样率44.1K表示每秒钟采样44100个点，也就是横轴上每隔（1/44100）秒采集一个点。<br>
+采样点数（nframes）:采样到的点个数。</p>
+<p>在查询资料时看到了非常具体的音频采样解释例子</p>
+<blockquote>
+<p>采样位数和采样率都是时域中的参数。一段音频（声波）的变化曲线，从时域上看，其横轴表示时间t，纵轴表示幅度v（一般是电压）。那么，采样率44.1K表示每秒钟采样44100个点，也就是横轴上每隔（1/44100）秒采集一个点；而采到的每个点都用一个数值来表示其幅度（电压）。假设整个音频信号的变化幅度范围是-5V~+5V的话，我们将-5V~+5V分成65536份，那么采到的这些点的数值n(16位)，转换成电压，就是(n*10/65536)-5V。因此，采样位数分解的是音频电压的幅度！当然上面只是一个例子而已。对于某些A/D转换器来说，采集到的点的幅度值可能用补码来表示，那么换算成电压的公式就会不同，但将-5V~+5V这10V的变化范围分成了65536份这一点来说，是一样的。</p>
+</blockquote>
+<h2 id="读取常用参数">读取常用参数</h2>
+<pre><code>f = wave.open(file, 'rb')
+params = f.getparams()
+nchannels, sampwidth, framerate, nframes = para[: 4]
+</code></pre>
+<h2 id="wave类常用函数">wave类常用函数</h2>
+<pre><code>f = wave.open(file, mode)#打开一个wave文件流对象，返回该对象
+f.close()#关闭该流，使得该实例不可用
+f.getnchannels()#返回音频的声道数（1是单声道，2是立体声）
+f.getsampwidth()#返回该实例每一帧的字节宽度（量化位数）
+f.getframerate()#返回实例的采样频率
+f.getnframes()#返回音频的帧数
+f.getcomtype()#返回压缩类型（仅支持'NONE'）
+f.getcompname()#是getcomtype()的人类可读的版本，通常用'not compressed'表示'NONE'
+f.getparams()
+#返回一个元组tuple (nchannels, sampwidth, framerate, nframes, comptype,compname)，包含了以上的方法取得的几个值。
+f.readframes(n)
+#从流的当前指针位置一次读出音频的n个帧，并且指针后移n个帧，返回一个字节数组。
+rewind()
+#倒带，将该文件指针指向音频流的最开始位置。
+</code></pre>
+<p>reference:</p>
+<blockquote>
+<p>wav</p>
+<blockquote>
+<ul>
+<li>python音频处理用到的操作:<a href="https://blog.csdn.net/barry_j/article/details/80996372">https://blog.csdn.net/barry_j/article/details/80996372</a></li>
+<li>Python读取wav格式文件:<a href="https://blog.ailemon.me/2017/08/29/python-read-wav-files/">https://blog.ailemon.me/2017/08/29/python-read-wav-files/</a></li>
+</ul>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>numpy</p>
+<blockquote>
+<ul>
+<li>NumPy中的基本数据类型<a href="https://blog.csdn.net/paulsweet123/article/details/52461933">https://blog.csdn.net/paulsweet123/article/details/52461933</a></li>
+<li>Numpy快速入门(一)——shape属性<a href="https://www.cnblogs.com/liangxiarong/p/8993300.html">https://www.cnblogs.com/liangxiarong/p/8993300.html</a></li>
+</ul>
+</blockquote>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Test]]></title>
         <id>https://SBDZZ.github.io/post/test/</id>

@@ -1,0 +1,236 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>关于Python wav文件参数以及wave类使用 | Gridea</title>
+<link rel="shortcut icon" href="https://SBDZZ.github.io/favicon.ico?v=1603035305663">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://SBDZZ.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="关于Python wav文件参数以及wave类使用 | Gridea - Atom Feed" href="https://SBDZZ.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="上周242Lab查找了很多有关wav音频文件以及wave类使用的信息，在这里做个整理
+wav文件
+文件读取：
+wave.open(file, mode)
+
+mode: 'rb' 读取文件， 'wb' 写入文件
+常用参数
+声道数（nchann..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://SBDZZ.github.io">
+  <img class="avatar" src="https://SBDZZ.github.io/images/avatar.png?v=1603035305663" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              关于Python wav文件参数以及wave类使用
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-10-18
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>上周242Lab查找了很多有关wav音频文件以及wave类使用的信息，在这里做个整理</p>
+<h1 id="wav文件">wav文件</h1>
+<h2 id="文件读取">文件读取：</h2>
+<pre><code>wave.open(file, mode)
+</code></pre>
+<p>mode: 'rb' 读取文件， 'wb' 写入文件</p>
+<h2 id="常用参数">常用参数</h2>
+<p>声道数（nchannels）:支持能不同发声的音响的个数<br>
+量化位数（sampwidth）:又称为采样位数，是模拟量转换成数字量之后的数据位数。量化位是对模拟音频信号的幅度轴进行数字化，它决定了模拟信号数字化以后的动态范围。在声卡中常见的为8位，16位，32位。8位声卡的声音从最低音到最高音只有256个级别，16位声卡有65536个高低音级别。用2进制来表示不同的精度单位。量化位数越大，采样的越精确，但同时花费的空间也越大。<br>
+采样频率（framerate）:单位时间内采样点的个数。如采样率44.1K表示每秒钟采样44100个点，也就是横轴上每隔（1/44100）秒采集一个点。<br>
+采样点数（nframes）:采样到的点个数。</p>
+<p>在查询资料时看到了非常具体的音频采样解释例子</p>
+<blockquote>
+<p>采样位数和采样率都是时域中的参数。一段音频（声波）的变化曲线，从时域上看，其横轴表示时间t，纵轴表示幅度v（一般是电压）。那么，采样率44.1K表示每秒钟采样44100个点，也就是横轴上每隔（1/44100）秒采集一个点；而采到的每个点都用一个数值来表示其幅度（电压）。假设整个音频信号的变化幅度范围是-5V~+5V的话，我们将-5V~+5V分成65536份，那么采到的这些点的数值n(16位)，转换成电压，就是(n*10/65536)-5V。因此，采样位数分解的是音频电压的幅度！当然上面只是一个例子而已。对于某些A/D转换器来说，采集到的点的幅度值可能用补码来表示，那么换算成电压的公式就会不同，但将-5V~+5V这10V的变化范围分成了65536份这一点来说，是一样的。</p>
+</blockquote>
+<h2 id="读取常用参数">读取常用参数</h2>
+<pre><code>f = wave.open(file, 'rb')
+params = f.getparams()
+nchannels, sampwidth, framerate, nframes = para[: 4]
+</code></pre>
+<h2 id="wave类常用函数">wave类常用函数</h2>
+<pre><code>f = wave.open(file, mode)#打开一个wave文件流对象，返回该对象
+f.close()#关闭该流，使得该实例不可用
+f.getnchannels()#返回音频的声道数（1是单声道，2是立体声）
+f.getsampwidth()#返回该实例每一帧的字节宽度（量化位数）
+f.getframerate()#返回实例的采样频率
+f.getnframes()#返回音频的帧数
+f.getcomtype()#返回压缩类型（仅支持'NONE'）
+f.getcompname()#是getcomtype()的人类可读的版本，通常用'not compressed'表示'NONE'
+f.getparams()
+#返回一个元组tuple (nchannels, sampwidth, framerate, nframes, comptype,compname)，包含了以上的方法取得的几个值。
+f.readframes(n)
+#从流的当前指针位置一次读出音频的n个帧，并且指针后移n个帧，返回一个字节数组。
+rewind()
+#倒带，将该文件指针指向音频流的最开始位置。
+</code></pre>
+<p>reference:</p>
+<blockquote>
+<p>wav</p>
+<blockquote>
+<ul>
+<li>python音频处理用到的操作:<a href="https://blog.csdn.net/barry_j/article/details/80996372">https://blog.csdn.net/barry_j/article/details/80996372</a></li>
+<li>Python读取wav格式文件:<a href="https://blog.ailemon.me/2017/08/29/python-read-wav-files/">https://blog.ailemon.me/2017/08/29/python-read-wav-files/</a></li>
+</ul>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>numpy</p>
+<blockquote>
+<ul>
+<li>NumPy中的基本数据类型<a href="https://blog.csdn.net/paulsweet123/article/details/52461933">https://blog.csdn.net/paulsweet123/article/details/52461933</a></li>
+<li>Numpy快速入门(一)——shape属性<a href="https://www.cnblogs.com/liangxiarong/p/8993300.html">https://www.cnblogs.com/liangxiarong/p/8993300.html</a></li>
+</ul>
+</blockquote>
+</blockquote>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#wav%E6%96%87%E4%BB%B6">wav文件</a>
+<ul>
+<li><a href="#%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96">文件读取：</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0">常用参数</a></li>
+<li><a href="#%E8%AF%BB%E5%8F%96%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0">读取常用参数</a></li>
+<li><a href="#wave%E7%B1%BB%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0">wave类常用函数</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://SBDZZ.github.io/post/test/">
+              <h3 class="post-title">
+                Test
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://SBDZZ.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
