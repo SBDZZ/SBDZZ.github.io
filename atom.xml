@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://Jimmy.github.io</id>
+    <id>https://SBDZZ.github.io</id>
     <title>Gridea</title>
-    <updated>2020-10-18T11:13:17.229Z</updated>
+    <updated>2020-10-18T11:25:55.229Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://Jimmy.github.io"/>
-    <link rel="self" href="https://Jimmy.github.io/atom.xml"/>
+    <link rel="alternate" href="https://SBDZZ.github.io"/>
+    <link rel="self" href="https://SBDZZ.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
-    <logo>https://Jimmy.github.io/images/avatar.png</logo>
-    <icon>https://Jimmy.github.io/favicon.ico</icon>
+    <logo>https://SBDZZ.github.io/images/avatar.png</logo>
+    <icon>https://SBDZZ.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
     <entry>
         <title type="html"><![CDATA[Test]]></title>
-        <id>https://Jimmy.github.io/post/test/</id>
-        <link href="https://Jimmy.github.io/post/test/">
+        <id>https://SBDZZ.github.io/post/test/</id>
+        <link href="https://SBDZZ.github.io/post/test/">
         </link>
         <updated>2020-10-18T09:18:58.000Z</updated>
         <content type="html"><![CDATA[<h1 id="start">Start</h1>
@@ -24,8 +24,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://Jimmy.github.io/post/hello-gridea/</id>
-        <link href="https://Jimmy.github.io/post/hello-gridea/">
+        <id>https://SBDZZ.github.io/post/hello-gridea/</id>
+        <link href="https://SBDZZ.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
         <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
