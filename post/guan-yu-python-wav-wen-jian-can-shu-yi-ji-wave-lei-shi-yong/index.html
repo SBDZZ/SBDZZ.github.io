@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>关于Python wav文件参数以及wave类使用 | Gridea</title>
-<link rel="shortcut icon" href="https://SBDZZ.github.io/favicon.ico?v=1603035305663">
+<link rel="shortcut icon" href="https://SBDZZ.github.io/favicon.ico?v=1603195642752">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://SBDZZ.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="关于Python wav文件参数以及wave类使用 | Gridea - Atom Feed" href="https://SBDZZ.github.io/atom.xml">
@@ -28,7 +28,7 @@ mode: 'rb' 读取文件， 'wb' 写入文件
       <div class="main-content">
         <div class="site-header">
   <a href="https://SBDZZ.github.io">
-  <img class="avatar" src="https://SBDZZ.github.io/images/avatar.png?v=1603035305663" alt="">
+  <img class="avatar" src="https://SBDZZ.github.io/images/avatar.png?v=1603195642752" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -88,7 +88,7 @@ mode: 'rb' 读取文件， 'wb' 写入文件
                 2020-10-18
               </span>
               <span>
-                4 min read
+                7 min read
               </span>
               
             </div>
@@ -131,7 +131,75 @@ f.readframes(n)
 rewind()
 #倒带，将该文件指针指向音频流的最开始位置。
 </code></pre>
-<p>reference:</p>
+<h2 id="数据处理">数据处理</h2>
+<p>处理数据的过程中，可以使用numpy中的shape来改变数组的形状，主要是为了解决立体声即双轨声道时候的信号能量表示问题。在看到这部分操作是其代码是为了绘制音频图像，所以将得到的数组数据整形为1/2维。</p>
+<pre><code>import numpy as np
+
+a = np.array([1,2,3])
+
+print(a.shape) #输出 (3,)，表示一维且第一维大小为3
+a = np.array([[1,2,3],[4,5,6]])
+a.shape = 3,2 #可以将原为2*3的数组（矩阵）转为3*2数组（矩阵）。当某数轴的参数为-1时，可根
+据元素个数，自动计算另一轴的最大长度
+print(a)#输出[[1 2][3 4][5 6]，重新定义数组大小
+a = a.T
+print(a)#输出[[1 3 5][2 4 6]]
+</code></pre>
+<p>具体音频文件操作代码：</p>
+<pre><code>str_data  =  f.readframes(nframes)
+wave_data = np.fromstring(str_data, dtype = np.short) #将声音文件数据转换为数组矩阵形式
+wave_data.shape = -1, num_channel #按照声道数将数组整形，单声道时候是一列数组，双声道时候是两列的矩阵
+wave_data = wave_data.T #将矩阵转置
+</code></pre>
+<p>对于数组整形还有更简单的等价操作</p>
+<pre><code>wave_data  =  np.reshape(wave_data, [nframes, nchannels])
+#也可以写作 wave_data = wave_data.reshape(nframes, nchannels)
+</code></pre>
+<h2 id="wav写入">wav写入</h2>
+<pre><code>import  wave
+#import matplotlib.pyplot as plt
+import  numpy as np
+import  os
+import  struct
+ 
+#wav文件读取
+filepath  =  &quot;./data/&quot;  #添加路径
+filename =  os.listdir(filepath)  #得到文件夹下的所有文件名称 
+f  =  wave. open (filepath + filename[ 0 ], 'rb' )
+params  =  f.getparams()
+nchannels, sampwidth, framerate, nframes  =  params[: 4 ]
+strData  =  f.readframes(nframes) #读取音频，字符串格式
+waveData  =  np.fromstring(strData,dtype = np.int16) #将字符串转化为int
+waveData  =  waveData * 1.0 / ( max ( abs (waveData))) #wave幅值归一化
+waveData  =  np.reshape(waveData,[nframes,nchannels])
+f.close()
+#wav文件写入
+outData  =  waveData #待写入wav的数据，这里仍然取waveData数据
+outData  =  np.reshape(outData,[nframes * nchannels, 1 ])
+#多通道的写入与多通道读类似，多通道读取是将一维数据reshape为二维，多通道的写入是将二维的数据reshape为一维，其实就是一个逆向的过程
+outfile  =  filepath + 'out2.wav'
+outwave  =  wave. open (outfile,  'wb' ) #定义存储路径以及文件名
+nchannels  =  3
+sampwidth  =  2
+fs  =  8000
+data_size  =  len (outData)
+framerate  =  int (fs)
+nframes  =  data_size
+comptype  =  &quot;NONE&quot;
+compname  =  &quot;not compressed&quot;
+outwave.setparams((nchannels, sampwidth, framerate, nframes,
+     comptype, compname))
+ 
+ #开始写入数组数据
+for  v  in  outData:
+         outwave.writeframes(struct.pack( 'h' ,  int (v  *  64000  /  2 ))) #outData:16位，-32767~32767，注意不要溢出
+outwave.close()
+</code></pre>
+<p>注意到代码中在写入数组数据打包的时候用到了<code>struct.pack()</code>，其作用是用来规定转化的方法和格式。在代码中将数字转换为integer的二进制格式。</p>
+<p><code>struct.pack(fmt,v1,v2,.....)</code><br>
+将v1,v2等参数的值进行一层包装，包装的方法由fmt指定。被包装的参数必须严格符合fmt。最后返回一<strong>个包装后的字符串</strong>。<br>
+fmt参数有一张参考表，由于图床暂时未搭建（用Github搭建的挂了），可在reference关于struct.pack()的部分链接内找到<br>
+reference:</p>
 <blockquote>
 <p>wav</p>
 <blockquote>
@@ -147,6 +215,15 @@ rewind()
 <ul>
 <li>NumPy中的基本数据类型<a href="https://blog.csdn.net/paulsweet123/article/details/52461933">https://blog.csdn.net/paulsweet123/article/details/52461933</a></li>
 <li>Numpy快速入门(一)——shape属性<a href="https://www.cnblogs.com/liangxiarong/p/8993300.html">https://www.cnblogs.com/liangxiarong/p/8993300.html</a></li>
+<li>Numpy.reshape函数解释 <a href="https://blog.csdn.net/xiaoqinting2015/article/details/69936952">https://blog.csdn.net/xiaoqinting2015/article/details/69936952</a></li>
+</ul>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>struct.pack</p>
+<blockquote>
+<ul>
+<li>Python中struct.pack()和struct.unpack()用法详细说明<a href="https://blog.csdn.net/weiwangchao_/article/details/80395941">https://blog.csdn.net/weiwangchao_/article/details/80395941</a></li>
 </ul>
 </blockquote>
 </blockquote>
@@ -160,6 +237,8 @@ rewind()
 <li><a href="#%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0">常用参数</a></li>
 <li><a href="#%E8%AF%BB%E5%8F%96%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0">读取常用参数</a></li>
 <li><a href="#wave%E7%B1%BB%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0">wave类常用函数</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86">数据处理</a></li>
+<li><a href="#wav%E5%86%99%E5%85%A5">wav写入</a></li>
 </ul>
 </li>
 </ul>
